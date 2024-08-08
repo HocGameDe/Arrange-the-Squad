@@ -5,6 +5,7 @@ using UnityEngine;
 public interface ISelected
 {
     public void Selected();
+    public void ActionWhenSelected(Vector3 pos);
     public void UnSelected();
 }
 public class Soldier : MonoBehaviour,ISelected
@@ -19,7 +20,7 @@ public class Soldier : MonoBehaviour,ISelected
     {
         transform.position = Vector3.MoveTowards(transform.position, newPos, moveSpeed*Time.deltaTime);
     }
-    private IEnumerator IMove(Vector3 newPos)
+    private IEnumerator IEMove(Vector3 newPos)
     {
         while(transform.position != newPos)
         {
@@ -30,7 +31,7 @@ public class Soldier : MonoBehaviour,ISelected
     public void StartMoveToPos(Vector3 newPos)
     {
         StopAllCoroutines();
-        StartCoroutine(IMove(newPos));
+        StartCoroutine(IEMove(newPos));
     }
 
     public void Selected()
@@ -40,6 +41,11 @@ public class Soldier : MonoBehaviour,ISelected
     public void UnSelected()
     {
         selectedBackground.SetActive(false);
+    }
+
+    public void ActionWhenSelected(Vector3 pos)
+    {
+        StartMoveToPos(pos);
     }
 }
 

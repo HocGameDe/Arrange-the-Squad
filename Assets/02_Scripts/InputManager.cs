@@ -23,6 +23,7 @@ public class EventAction
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance;
+    public bool doNotInteractWithUI;
     public Vector2 mousePoistion;
     private new Camera camera;
     private Dictionary<EventInputCategory, EventAction> eventInputDic = new Dictionary<EventInputCategory, EventAction>();
@@ -53,7 +54,7 @@ public class InputManager : MonoBehaviour
     }
     private void Update()
     {
-        //if (EventSystem.current.IsPointerOverGameObject()) return;
+        if(doNotInteractWithUI) if (EventSystem.current.IsPointerOverGameObject()) return;
         mousePoistion = ConvertScreenToWorldPoint(Input.mousePosition);
         if (Input.GetMouseButtonDown(0))
         {

@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 {
     public static Player Instance;
     [SerializeField] private GameObject rectangleDraw;
-    private List<Soldier> soldiers = new List<Soldier>();
+    private List<ISelected> selectedObjects = new List<ISelected>();
     private Vector2 mousePosBeginHold;
     private Vector2 rectangleDrawPosition;
     private Vector2 leftBottomPos;
@@ -22,8 +22,8 @@ public class Player : MonoBehaviour
     private RaycastHit2D[] hits;
     [SerializeField] private float spaceBetweenSoldier=1.1f;
     [SerializeField] private int countCircle=6;
-    [SerializeField] private bool canRandomDirectionPos;
-    [SerializeField] private float spaceRandomDirection = 0.1f;
+    [SerializeField] private bool canRandomPosition;
+    [SerializeField] private float spaceRandomPosition = 0.1f;
     private void Awake()
     {
         Instance = this;
@@ -35,6 +35,10 @@ public class Player : MonoBehaviour
         InputManager.Instance.SubEventInput(EventInputCategory.MouseHoldLeft, () => { DrawSelectArea(mousePosBeginHold, InputManager.Instance.mousePoistion); });
         InputManager.Instance.SubEventInput(EventInputCategory.MouseUpLeft, () => { SelectAllSoildierOnAreaSelected(); });
         InputManager.Instance.SubEventInput(EventInputCategory.MouseDownRight, () => { SwitchMoveType(); });
+    }
+    private void SetMouseBeginHold()
+    {
+        mousePosBeginHold = InputManager.Instance.mousePoistion;
     }
     public void DrawSelectArea(Vector2 mousePosBegin, Vector2 mousePosEnd)
     {
@@ -49,10 +53,7 @@ public class Player : MonoBehaviour
         rectangleDrawPosition.y = leftBottomPos.y + sizeScale.y / 2;
         rectangleDraw.transform.position = rectangleDrawPosition;
     }
-    private void SetMouseBeginHold()
-    {
-        this.mousePosBeginHold = InputManager.Instance.mousePoistion;
-    }
+
     private Vector2 newPosSoldier;
     private Vector2 randomDirectionPos;
     private int countSoldierCurrent;
@@ -60,76 +61,71 @@ public class Player : MonoBehaviour
     private int indexCurrentCircle;
     private int radiusCircle;
     private MoveType moveType = MoveType.Circle;
-    public void MoveAllSoldiersCircle()
+    public void ArrangeSquadToCircle()
     {
-        if (soldiers.Count > 0)
+        if (selectedObjects.Count > 0)
         {
-            soldiers[0].StartMoveToPos(InputManager.Instance.mousePoistion);
+            selectedObjects[0].ActionWhenSelected(InputManager.Instance.mousePoistion);
             countSoldierCurrent = 0;
             index = 1;
-            while(index<soldiers.Count)
+            while(index<selectedObjects.Count)
             {
                 if(index>countSoldierCurrent) countSoldierCurrent += countCircle;
                 radiusCircle = countSoldierCurrent / countCircle;
                 for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++,index++)
                 {
-                    if (index == soldiers.Count) return;
+                    if (index == selectedObjects.Count) return;
                     newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent *(indexCurrentCircle+1)) * Vector2.right * radiusCircle* spaceBetweenSoldier;
                     newPosSoldier = InputManager.Instance.mousePoistion + newPosSoldier;
-                    if (canRandomDirectionPos) RandomDirectionPos(); else randomDirectionPos = Vector2.zero;
-                    soldiers[index].StartMoveToPos(newPosSoldier+ randomDirectionPos);
+                    if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
+                    selectedObjects[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
                 }
             }
         }      
     }
     private int width;
     private int height;
-    public void MoveAllSoldiersSquare()
+    public void ArrangeSquadToSquare()
     {
-        if (soldiers.Count > 0)
+        if (selectedObjects.Count > 0)
         {
-            width = height = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
+            width = height = (int)Math.Ceiling(Math.Sqrt(selectedObjects.Count));
             index = 0;
             for (int i = 0; i < height; i++)
                 for(int j = 0; j < width; j++,index++)
                 {
-                    if (index == soldiers.Count) return;
+                    if (index == selectedObjects.Count) return;
                     newPosSoldier.x = j* spaceBetweenSoldier;
                     newPosSoldier.y = i* spaceBetweenSoldier;
                     newPosSoldier = InputManager.Instance.mousePoistion - newPosSoldier + Vector2.one*width*0.65f/2;
-                    if (canRandomDirectionPos) RandomDirectionPos(); else randomDirectionPos = Vector2.zero;
-                    soldiers[index].StartMoveToPos(newPosSoldier+ randomDirectionPos);
+                    if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
+                    selectedObjects[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
                 }
         }
     }
-    private void RandomDirectionPos()
+    private void RandomPosition()
     {
-        randomDirectionPos.x= Random.Range(-spaceRandomDirection, spaceRandomDirection);
-        randomDirectionPos.y= Random.Range(-spaceRandomDirection, spaceRandomDirection);
+        randomDirectionPos.x= Random.Range(-spaceRandomPosition, spaceRandomPosition);
+        randomDirectionPos.y= Random.Range(-spaceRandomPosition, spaceRandomPosition);
     }
     public void SwitchMoveType()
     {
-        if (soldiers.Count <= 0) return;
+        if (selectedObjects.Count <= 0) return;
         if (moveType == MoveType.Circle)
         {
-            MoveAllSoldiersCircle();
+            ArrangeSquadToCircle();
             moveType = MoveType.Square;
         }
         else
         {
-            MoveAllSoldiersSquare();
+            ArrangeSquadToSquare();
             moveType = MoveType.Circle;
         }
     }
     public void RemoveAllSelectedList()
     {
-        foreach (var selected in soldiers) selected.UnSelected();
-        soldiers.Clear();
-    }
-    public void SelecSoldier(Soldier solider)
-    {
-        solider.Selected();
-        soldiers.Add(solider);
+        foreach (var selected in selectedObjects) selected.UnSelected();
+        selectedObjects.Clear();
     }
     public void SelectAllSoildierOnAreaSelected()
     {
@@ -142,7 +138,8 @@ public class Player : MonoBehaviour
             {
                 if (hit.collider.transform.TryGetComponent<ISelected>(out ISelected selected))
                 {
-                    SelecSoldier(hit.collider.transform.GetComponent<Soldier>());
+                    selectedObjects.Add(selected);
+                    selected.Selected();
                     SetActiveSelectedArea(false);
                     return;
                 }
@@ -156,7 +153,8 @@ public class Player : MonoBehaviour
         {
             if (hit.collider.transform.TryGetComponent<ISelected>(out ISelected selected))
             {
-                SelecSoldier(hit.collider.transform.GetComponent<Soldier>());
+                selectedObjects.Add(selected);
+                selected.Selected();
             }
         }
         SetActiveSelectedArea(false);
