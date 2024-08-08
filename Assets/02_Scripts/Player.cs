@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 {
     public static Player Instance;
     [SerializeField] private GameObject rectangleDraw;
-    private List<ISelected> selectedObjects = new List<ISelected>();
+    private List<ISelected> soldiers = new List<ISelected>();
     private Vector2 mousePosBeginHold;
     private Vector2 rectangleDrawPosition;
     private Vector2 leftBottomPos;
@@ -63,22 +63,22 @@ public class Player : MonoBehaviour
     private MoveType moveType = MoveType.Circle;
     public void ArrangeSquadToCircle()
     {
-        if (selectedObjects.Count > 0)
+        if (soldiers.Count > 0)
         {
-            selectedObjects[0].ActionWhenSelected(InputManager.Instance.mousePoistion);
+            soldiers[0].ActionWhenSelected(InputManager.Instance.mousePoistion);
             countSoldierCurrent = 0;
             index = 1;
-            while(index<selectedObjects.Count)
+            while(index<soldiers.Count)
             {
                 if(index>countSoldierCurrent) countSoldierCurrent += countCircle;
                 radiusCircle = countSoldierCurrent / countCircle;
                 for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++,index++)
                 {
-                    if (index == selectedObjects.Count) return;
+                    if (index == soldiers.Count) return;
                     newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent *(indexCurrentCircle+1)) * Vector2.right * radiusCircle* spaceBetweenSoldier;
                     newPosSoldier = InputManager.Instance.mousePoistion + newPosSoldier;
                     if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
-                    selectedObjects[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
+                    soldiers[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
                 }
             }
         }      
@@ -87,19 +87,19 @@ public class Player : MonoBehaviour
     private int height;
     public void ArrangeSquadToSquare()
     {
-        if (selectedObjects.Count > 0)
+        if (soldiers.Count > 0)
         {
-            width = height = (int)Math.Ceiling(Math.Sqrt(selectedObjects.Count));
+            width = height = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
             index = 0;
             for (int i = 0; i < height; i++)
                 for(int j = 0; j < width; j++,index++)
                 {
-                    if (index == selectedObjects.Count) return;
+                    if (index == soldiers.Count) return;
                     newPosSoldier.x = j* spaceBetweenSoldier;
                     newPosSoldier.y = i* spaceBetweenSoldier;
                     newPosSoldier = InputManager.Instance.mousePoistion - newPosSoldier + Vector2.one*width*0.65f/2;
                     if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
-                    selectedObjects[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
+                    soldiers[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
                 }
         }
     }
@@ -110,7 +110,7 @@ public class Player : MonoBehaviour
     }
     public void SwitchMoveType()
     {
-        if (selectedObjects.Count <= 0) return;
+        if (soldiers.Count <= 0) return;
         if (moveType == MoveType.Circle)
         {
             ArrangeSquadToCircle();
@@ -124,8 +124,8 @@ public class Player : MonoBehaviour
     }
     public void RemoveAllSelectedList()
     {
-        foreach (var selected in selectedObjects) selected.UnSelected();
-        selectedObjects.Clear();
+        foreach (var selected in soldiers) selected.UnSelected();
+        soldiers.Clear();
     }
     public void SelectAllSoildierOnAreaSelected()
     {
@@ -138,7 +138,7 @@ public class Player : MonoBehaviour
             {
                 if (hit.collider.transform.TryGetComponent<ISelected>(out ISelected selected))
                 {
-                    selectedObjects.Add(selected);
+                    soldiers.Add(selected);
                     selected.Selected();
                     SetActiveSelectedArea(false);
                     return;
@@ -153,7 +153,7 @@ public class Player : MonoBehaviour
         {
             if (hit.collider.transform.TryGetComponent<ISelected>(out ISelected selected))
             {
-                selectedObjects.Add(selected);
+                soldiers.Add(selected);
                 selected.Selected();
             }
         }
