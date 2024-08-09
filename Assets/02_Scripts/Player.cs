@@ -20,8 +20,8 @@ public class Player : MonoBehaviour
     private Vector2 rightTopPos;
     private Vector2 sizeScale;
     private RaycastHit2D[] hits;
-    [SerializeField] private float spaceBetweenSoldier=1.1f;
-    [SerializeField] private int countCircle=6;
+    [SerializeField] private float spaceBetweenSoldier = 1.1f;
+    [SerializeField] private int countCircle = 6;
     [SerializeField] private bool canRandomPosition;
     [SerializeField] private float spaceRandomPosition = 0.1f;
     private void Awake()
@@ -63,50 +63,48 @@ public class Player : MonoBehaviour
     private MoveType moveType = MoveType.Circle;
     public void ArrangeSquadToCircle()
     {
-        if (soldiers.Count > 0)
+        if (soldiers.Count <= 0) return;
+
+        soldiers[0].ActionWhenSelected(InputManager.Instance.mousePoistion);
+        countSoldierCurrent = 0;
+        index = 1;
+        while (index < soldiers.Count)
         {
-            soldiers[0].ActionWhenSelected(InputManager.Instance.mousePoistion);
-            countSoldierCurrent = 0;
-            index = 1;
-            while(index<soldiers.Count)
+            if (index > countSoldierCurrent) countSoldierCurrent += countCircle;
+            radiusCircle = countSoldierCurrent / countCircle;
+            for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++, index++)
             {
-                if(index>countSoldierCurrent) countSoldierCurrent += countCircle;
-                radiusCircle = countSoldierCurrent / countCircle;
-                for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++,index++)
-                {
-                    if (index == soldiers.Count) return;
-                    newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent *(indexCurrentCircle+1)) * Vector2.right * radiusCircle* spaceBetweenSoldier;
-                    newPosSoldier = InputManager.Instance.mousePoistion + newPosSoldier;
-                    if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
-                    soldiers[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
-                }
+                if (index == soldiers.Count) return;
+                newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent * (indexCurrentCircle + 1)) * Vector2.right * radiusCircle * spaceBetweenSoldier;
+                newPosSoldier = InputManager.Instance.mousePoistion + newPosSoldier;
+                if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
+                soldiers[index].ActionWhenSelected(newPosSoldier + randomDirectionPos);
             }
-        }      
+        }
     }
     private int width;
     private int height;
     public void ArrangeSquadToSquare()
     {
-        if (soldiers.Count > 0)
-        {
-            width = height = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
-            index = 0;
-            for (int i = 0; i < height; i++)
-                for(int j = 0; j < width; j++,index++)
-                {
-                    if (index == soldiers.Count) return;
-                    newPosSoldier.x = j* spaceBetweenSoldier;
-                    newPosSoldier.y = i* spaceBetweenSoldier;
-                    newPosSoldier = InputManager.Instance.mousePoistion - newPosSoldier + Vector2.one*width*0.65f/2;
-                    if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
-                    soldiers[index].ActionWhenSelected(newPosSoldier+ randomDirectionPos);
-                }
-        }
+        if (soldiers.Count <= 0) return;
+
+        width = height = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
+        index = 0;
+        for (int h = 0; h < height; h++)
+            for (int w = 0; w < width; w++, index++)
+            {
+                if (index == soldiers.Count) return;
+                newPosSoldier.x = w * spaceBetweenSoldier;
+                newPosSoldier.y = h * spaceBetweenSoldier;
+                newPosSoldier = InputManager.Instance.mousePoistion - newPosSoldier + Vector2.one * width * 0.65f / 2;
+                if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
+                soldiers[index].ActionWhenSelected(newPosSoldier + randomDirectionPos);
+            }      
     }
     private void RandomPosition()
     {
-        randomDirectionPos.x= Random.Range(-spaceRandomPosition, spaceRandomPosition);
-        randomDirectionPos.y= Random.Range(-spaceRandomPosition, spaceRandomPosition);
+        randomDirectionPos.x = Random.Range(-spaceRandomPosition, spaceRandomPosition);
+        randomDirectionPos.y = Random.Range(-spaceRandomPosition, spaceRandomPosition);
     }
     public void SwitchMoveType()
     {
@@ -131,7 +129,7 @@ public class Player : MonoBehaviour
     {
         RemoveAllSelectedList();
         hits = Physics2D.BoxCastAll(rectangleDraw.transform.position, sizeScale, 0, Vector3.forward);
-        if(hits.Length == 0&&Vector2.Distance(mousePosBeginHold,InputManager.Instance.mousePoistion)<0.005f)
+        if (hits.Length == 0 && Vector2.Distance(mousePosBeginHold, InputManager.Instance.mousePoistion) < 0.005f)
         {
             hits = Physics2D.RaycastAll(InputManager.Instance.mousePoistion, Vector3.forward);
             foreach (var hit in hits)

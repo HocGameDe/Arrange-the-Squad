@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4690146819118862116
 Transform:
   m_ObjectHideFlags: 0
@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 4707776559409668199}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.467, z: 0}
-  m_LocalScale: {x: 1, y: 0.2529, z: 1}
+  m_LocalPosition: {x: -0.069, y: -0.675, z: 0}
+  m_LocalScale: {x: 1.0746, y: 0.30084985, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4724098405657971428}
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.35056463, g: 1, b: 0.050943315, a: 1}
+  m_Color: {r: 0.3140496, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 4724098405657971428}
   - component: {fileID: 8667677873842503646}
   - component: {fileID: 7107478477957962782}
-  - component: {fileID: 6356015282243710374}
+  - component: {fileID: 5000101771116156759}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Untagged
@@ -112,7 +112,7 @@ Transform:
   m_GameObject: {fileID: 7132701154979922615}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.79, y: -0.99, z: 0}
+  m_LocalPosition: {x: -2.779, y: -1.251, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -160,7 +160,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f049cab809d9379418384e54d202dd8c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -185,8 +185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 20
   selectedBackground: {fileID: 4707776559409668199}
---- !u!58 &6356015282243710374
-CircleCollider2D:
+--- !u!61 &5000101771116156759
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -217,6 +217,16 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.052562833, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.298969, y: 1.4536083}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Size: {x: 1.072118, y: 1.4536083}
+  m_EdgeRadius: 0
