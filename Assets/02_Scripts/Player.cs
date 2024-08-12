@@ -75,7 +75,8 @@ public class Player : MonoBehaviour
             for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++, index++)
             {
                 if (index == soldiers.Count) return;
-                newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent * (indexCurrentCircle + 1)) * Vector2.right * radiusCircle * spaceBetweenSoldier;
+                newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent * (indexCurrentCircle + 1)) 
+                    * Vector2.right * radiusCircle * spaceBetweenSoldier;
                 newPosSoldier = InputManager.Instance.mousePoistion + newPosSoldier;
                 if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
                 soldiers[index].ActionWhenSelected(newPosSoldier + randomDirectionPos);

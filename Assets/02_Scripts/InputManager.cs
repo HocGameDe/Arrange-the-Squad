@@ -87,3 +87,6 @@ public class InputManager : MonoBehaviour
         if (holdingMouseRight) eventInputDic[EventInputCategory.MouseHoldRight].RunAction();
     }
 }
+
+
+

@@ -12,6 +12,18 @@ public class Soldier : MonoBehaviour,ISelected
 {
     [SerializeField] private float moveSpeed;
     [SerializeField] private GameObject selectedBackground;
+    public void Selected()
+    {
+        selectedBackground.SetActive(true);
+    }
+    public void UnSelected()
+    {
+        selectedBackground.SetActive(false);
+    }
+    public void ActionWhenSelected(Vector3 pos)
+    {
+        StartMoveToPos(pos);
+    }
     private void Start()
     {
         selectedBackground.SetActive(false);
@@ -32,20 +44,6 @@ public class Soldier : MonoBehaviour,ISelected
     {
         StopAllCoroutines();
         StartCoroutine(IEMove(newPos));
-    }
-
-    public void Selected()
-    {
-        selectedBackground.SetActive(true);
-    }
-    public void UnSelected()
-    {
-        selectedBackground.SetActive(false);
-    }
-
-    public void ActionWhenSelected(Vector3 pos)
-    {
-        StartMoveToPos(pos);
     }
 }
 
