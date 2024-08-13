@@ -61,11 +61,12 @@ public class Player : MonoBehaviour
     private int indexCurrentCircle;
     private int radiusCircle;
     private MoveType moveType = MoveType.Circle;
-    public void ArrangeSquadToCircle()
+    WaitForSeconds timeDelay = new WaitForSeconds(0.3f);
+    public IEnumerator ArrangeSquadToCircle()
     {
-        if (soldiers.Count <= 0) return;
-
-        soldiers[0].ActionWhenSelected(InputManager.Instance.mousePoistion);
+        if (soldiers.Count <= 0) yield break;
+        Vector2 posMouse = InputManager.Instance.mousePoistion;
+        soldiers[0].ActionWhenSelected(posMouse);
         countSoldierCurrent = 0;
         index = 1;
         while (index < soldiers.Count)
@@ -74,32 +75,34 @@ public class Player : MonoBehaviour
             radiusCircle = countSoldierCurrent / countCircle;
             for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++, index++)
             {
-                if (index == soldiers.Count) return;
+                if (index == soldiers.Count) yield break;
                 newPosSoldier = Quaternion.Euler(0, 0, 360 / countSoldierCurrent * (indexCurrentCircle + 1)) 
                     * Vector2.right * radiusCircle * spaceBetweenSoldier;
-                newPosSoldier = InputManager.Instance.mousePoistion + newPosSoldier;
+                newPosSoldier = posMouse + newPosSoldier;
                 if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
                 soldiers[index].ActionWhenSelected(newPosSoldier + randomDirectionPos);
+                yield return timeDelay;
             }
         }
     }
     private int width;
     private int height;
-    public void ArrangeSquadToSquare()
+    public IEnumerator ArrangeSquadToSquare()
     {
-        if (soldiers.Count <= 0) return;
-
+        if (soldiers.Count <= 0) yield break;
+        Vector2 posMouse = InputManager.Instance.mousePoistion;
         width = height = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
         index = 0;
         for (int h = 0; h < height; h++)
             for (int w = 0; w < width; w++, index++)
             {
-                if (index == soldiers.Count) return;
+                if (index == soldiers.Count) yield break;
                 newPosSoldier.x = w * spaceBetweenSoldier;
                 newPosSoldier.y = h * spaceBetweenSoldier;
-                newPosSoldier = InputManager.Instance.mousePoistion - newPosSoldier + Vector2.one * width * 0.65f / 2;
+                newPosSoldier = posMouse - newPosSoldier + Vector2.one * width * 0.65f / 2;
                 if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
                 soldiers[index].ActionWhenSelected(newPosSoldier + randomDirectionPos);
+                yield return timeDelay;
             }      
     }
     private void RandomPosition()
@@ -112,12 +115,14 @@ public class Player : MonoBehaviour
         if (soldiers.Count <= 0) return;
         if (moveType == MoveType.Circle)
         {
-            ArrangeSquadToCircle();
+            StopAllCoroutines();
+            StartCoroutine(ArrangeSquadToCircle());
             moveType = MoveType.Square;
         }
         else
         {
-            ArrangeSquadToSquare();
+            StopAllCoroutines();
+            StartCoroutine(ArrangeSquadToSquare());
             moveType = MoveType.Circle;
         }
     }
