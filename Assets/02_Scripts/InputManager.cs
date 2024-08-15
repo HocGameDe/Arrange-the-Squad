@@ -68,7 +68,7 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             eventInputDic[EventInputCategory.MouseDownRight].RunAction();
-            holdingMouseRight = true;
+            holdingMouseRight = true;      
         }
         if (Input.GetMouseButtonUp(0))
         {
@@ -83,8 +83,14 @@ public class InputManager : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (holdingMouseLeft) eventInputDic[EventInputCategory.MouseHoldLeft].RunAction();
-        if (holdingMouseRight) eventInputDic[EventInputCategory.MouseHoldRight].RunAction();
+        if (holdingMouseLeft)
+        {
+            eventInputDic[EventInputCategory.MouseHoldLeft].RunAction();
+        }
+        if (holdingMouseRight)
+        {
+            eventInputDic[EventInputCategory.MouseHoldRight].RunAction();
+        }
     }
 }
 

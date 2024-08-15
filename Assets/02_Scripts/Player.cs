@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     private Vector2 sizeScale;
     private RaycastHit2D[] hits;
     [SerializeField] private float spaceBetweenSoldier = 1.1f;
-    [SerializeField] private int countCircle = 6;
+    [SerializeField] private int countSliderIncreaseCircle = 6;
     [SerializeField] private bool canRandomPosition;
     [SerializeField] private float spaceRandomPosition = 0.1f;
     private void Awake()
@@ -71,8 +71,8 @@ public class Player : MonoBehaviour
         index = 1;
         while (index < soldiers.Count)
         {
-            if (index > countSoldierCurrent) countSoldierCurrent += countCircle;
-            radiusCircle = countSoldierCurrent / countCircle;
+            if (index > countSoldierCurrent) countSoldierCurrent += countSliderIncreaseCircle;
+            radiusCircle = countSoldierCurrent / countSliderIncreaseCircle;
             for (indexCurrentCircle = 0; indexCurrentCircle < countSoldierCurrent; indexCurrentCircle++, index++)
             {
                 if (index == soldiers.Count) yield break;
@@ -85,21 +85,20 @@ public class Player : MonoBehaviour
             }
         }
     }
-    private int width;
-    private int height;
+    private int edge;
     public IEnumerator ArrangeSquadToSquare()
     {
         if (soldiers.Count <= 0) yield break;
         Vector2 posMouse = InputManager.Instance.mousePoistion;
-        width = height = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
+        edge = (int)Math.Ceiling(Math.Sqrt(soldiers.Count));
         index = 0;
-        for (int h = 0; h < height; h++)
-            for (int w = 0; w < width; w++, index++)
+        for (int h = 0; h < edge; h++)
+            for (int w = 0; w < edge; w++, index++)
             {
                 if (index == soldiers.Count) yield break;
                 newPosSoldier.x = w * spaceBetweenSoldier;
                 newPosSoldier.y = h * spaceBetweenSoldier;
-                newPosSoldier = posMouse - newPosSoldier + Vector2.one * width * 0.65f / 2;
+                newPosSoldier = posMouse - newPosSoldier + Vector2.one * edge * 0.65f / 2;
                 if (canRandomPosition) RandomPosition(); else randomDirectionPos = Vector2.zero;
                 soldiers[index].ActionWhenSelected(newPosSoldier + randomDirectionPos);
                 yield return timeDelay;
